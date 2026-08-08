@@ -1,42 +1,69 @@
-# Turbojet Digital Twin — Rudra
+# 🚀 R.U.D.R.A. - Physics-Informed Digital Twin for Turbojet Engines
 
-## Overview
-A web-based digital twin dashboard for a turbojet engine. It provides real-time simulation, monitoring, and visualization of thermodynamic cycles, engine health degradation, and sensor telemetry using an advanced Machine Learning backend.
+![RUDRA Dashboard Demo](./public/preview.png) *(Note: Please ensure `preview.png` is placed here to display the preview)*
 
-## Technical Stack
-- **Frontend**: Pure HTML, CSS, and Vanilla JavaScript. Designed for maximum performance with a lightweight footprint.
-- **3D Visualization**: **Three.js** is used for rendering the 3D engine geometry, enabling dynamic camera controls and interactive data visualization.
-- **Machine Learning Backend**: FastAPI backend (`server.py`) serving a robust XGBoost ensemble model. The backend maintains state across engine cycles to predict health components and Remaining Useful Life (RUL).
-- **Time-Series Processing**: Uses Continuous-Time Exponential Moving Averages (EMA) to handle non-continuous test sets, meaning it accurately tracks degradation even when flight cycles are skipped.
-- **Kalman Filtering**: Includes an Adaptive Kalman Filter (AKF) that smooths raw predictions, reducing noise and improving confidence intervals for the Overall Health Index (OHI).
+**R.U.D.R.A.** is an advanced, web-based digital twin dashboard tailored for turbojet engines. It integrates real-time thermodynamic simulation, interactive 3D visualizations, and predictive machine learning models to monitor engine health degradation and forecast Remaining Useful Life (RUL).
 
-## Key Technical Features
+---
 
-### 1. Thermodynamic Brayton Cycle Simulation
-The core physics engine computes both the ideal and actual Brayton cycles based on current telemetry:
-- Uses accurate gas properties ($c_{p,c}$, $\gamma_c$, etc.).
-- Generates geometrically exact logarithmic thermodynamic curves for the T-s Diagram.
-- Visually overlays the irreversible (actual) cycle on top of the isentropic (ideal) cycle.
+## ✨ Key Features
 
-### 2. Machine Learning Predictive Maintenance
-- The backend evaluates 6 target variables: `HI_compressor`, `HI_turbine`, `HI_combustor`, `HI_overall`, `thrust_N`, and `RUL`.
-- **Continuous-Time EMA**: Calculates dynamic alpha weights based on the time step (`dt`) between the last known flight cycle and the current one, providing robust predictions on sparse telemetry data.
-- **Stateful DB**: Uses SQLite to persist Kalman Filter states across server restarts for multiple active engines.
+### ⚙️ 1. Physics-Informed Thermodynamic Modeling (Brayton Cycle)
+- **Standardized Gas Turbine Station Notations:** Strictly adheres to physical definitions ($P_3 > P_2$) for Compressor Inlet (2), Compressor Exit (3), Combustor Exit (4), and Turbine Exit (5).
+- **Realistic Energy Boundaries:** Calculates exact isentropic efficiencies for the compressor and turbine (clipped within strict $0.7 - 0.95$ thermodynamic bounds).
+- **Live T-s Diagram:** Computes and visually overlays the actual irreversible cycle onto the theoretical isentropic cycle using real-time gas properties ($c_{p,c}$, $\gamma_c$).
 
-### 3. 3D Engine Visualization
-- **Dynamic Vertex Coloring**: The Three.js implementation dynamically alters the color properties of the engine geometry based on real-time temperature telemetry.
-- **Raycasting**: Allows users to interact with and click on specific engine components (compressor, combustor, turbine) to pull up localized performance metrics.
+### 🧠 2. Machine Learning Predictive Maintenance (PdM)
+- **Multi-Target Prediction:** Evaluates 6 distinct health metrics: `HI_compressor`, `HI_turbine`, `HI_combustor`, `HI_overall`, `thrust_N`, and `RUL`.
+- **Continuous-Time EMA (Exponential Moving Average):** Calculates dynamic time-weights based on flight cycles to handle sparse and non-continuous telemetry effectively.
+- **Adaptive Kalman Filtering (AKF):** Smooths noisy predictions to tighten confidence intervals for Overall Health Index (OHI). State histories are persisted using a robust backend SQLite database.
 
-### 4. Telemetry & Analytics Dashboard
-- Custom-built, highly optimized SVG circular gauges for real-time parameter tracking.
-- Canvas-based sparklines for immediate historical context windowing.
+### 🖥️ 3. 3D Interactive Visualization & UI
+- **Three.js Engine Rendering:** Generates a lightweight 3D turbojet model.
+- **Dynamic Vertex Coloring & Raycasting:** Allows users to interact with components (compressor, combustor, turbine) directly to isolate performance metrics, with colors dynamically shifting based on real-time temperature telemetry.
+- **Highly Optimized Canvas & SVG Displays:** Custom-built circular gauges and high-performance canvas sparklines avoid heavy charting libraries to guarantee a buttery-smooth 60 FPS dashboard experience.
 
-## Running the Project
+---
 
-To run the full application (including the machine learning prediction API and the frontend dashboard), execute the startup script from the root directory:
+## 🛠️ Technical Stack
+
+- **Frontend:** Pure HTML5, CSS3, Vanilla JavaScript, Three.js
+- **Backend:** Python 3.10+, FastAPI, Uvicorn, SQLite
+- **Machine Learning:** XGBoost Ensemble Regression, Scikit-Learn
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+Make sure you have Python 3.10 or later installed on your system. It is highly recommended to use a virtual environment.
+
+```bash
+# Install the required dependencies
+pip install -r requirements.txt
+```
+
+### 2. Launching the Twin
+To run the full application—including the FastAPI prediction server and the frontend dashboard—simply execute the startup script:
 
 ```bash
 python3 start_all.py
 ```
 
-This script will automatically start the FastAPI backend on port `8001`, load the XGBoost machine learning models, and open the dashboard in your default web browser (`http://localhost:8001`).
+This will:
+1. Verify port availability and initialize the FastAPI backend on `http://localhost:8001`.
+2. Automatically load the pre-trained XGBoost machine learning models.
+3. Open the R.U.D.R.A. digital twin dashboard in your default web browser.
+
+---
+
+## 📂 Data Format
+
+The Digital Twin accepts batch data uploads in CSV format for offline predictions. Ensure your dataset includes the following columns:
+`engine_id, cycle, altitude, mach, T_amb, P_amb, rpm, fuel_flow, P2_Pa, T2_K, P3_Pa, T3_K, P4_Pa, T4_K`
+
+*(Note: Raw telemetry `P2_Pa` aligns with the compressor exit in this dataset, which the API securely translates to standard $P_3$ for the predictive models).* 
+
+---
+
+*Created by [Divya](mailto:divya.25bai10900@vitbhopal.ac.in)*

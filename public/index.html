@@ -1308,20 +1308,39 @@ function initThree(){
     lastX=e.clientX; lastY=e.clientY;
     updateCamera();
   });
+  let initialPinchDist = null;
   canvas.addEventListener('touchstart', e=>{
-    isDragging=true; autoRotate=false; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
+    isDragging=true; autoRotate=false; 
+    lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
     touchStartPos = {x:lastX, y:lastY}; touchMoved = false;
+    if(e.touches.length === 2) {
+      initialPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    } else {
+      initialPinchDist = null;
+    }
   });
   canvas.addEventListener('touchmove', e=>{
     if(!isDragging) return;
+    e.preventDefault(); // Prevent page scrolling while interacting with 3D model
+    if(e.touches.length === 2) {
+      const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      if(initialPinchDist) {
+        const delta = initialPinchDist - currentDist;
+        camDist = Math.max(300, Math.min(6000, camDist + delta * 4.0)); // Zoom sensitivity
+        updateCamera();
+      }
+      initialPinchDist = currentDist;
+      touchMoved = true;
+      return;
+    }
     if(touchStartPos && Math.hypot(e.touches[0].clientX-touchStartPos.x, e.touches[0].clientY-touchStartPos.y) > 4) touchMoved = true;
     const dx=e.touches[0].clientX-lastX, dy=e.touches[0].clientY-lastY;
     rotY += dx*0.008; rotX = Math.max(-1.1, Math.min(1.1, rotX + dy*0.008));
     lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
     updateCamera();
-  });
+  }, {passive: false});
   window.addEventListener('touchend', e=>{
-    isDragging=false;
+    isDragging=false; initialPinchDist=null;
     if(touchStartPos && !touchMoved && e.changedTouches && e.changedTouches[0]){
       const key = getIntersectComponent(e.changedTouches[0].clientX, e.changedTouches[0].clientY, canvas);
       if(key) selectComponent(key);

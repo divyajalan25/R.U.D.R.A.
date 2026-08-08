@@ -88,7 +88,7 @@ def compute_physics_features(df):
     
     # Ideal temperatures
     T2_ideal = df['T_t_amb'] * (df['PR_compressor']) ** ((GAMMA_C - 1) / GAMMA_C)
-    T4_ideal = df['T3_K'] * (df['PR_turbine']) ** ((GAMMA_H - 1) / GAMMA_H)
+    T4_ideal = df['T3_K'] / (df['PR_turbine']) ** ((GAMMA_H - 1) / GAMMA_H)
     
     # Efficiencies
     df['eta_compressor'] = np.clip(np.abs((T2_ideal - df['T_t_amb']) / (df['T2_K'] - df['T_t_amb'] + 1e-8)), 0.7, 0.95)

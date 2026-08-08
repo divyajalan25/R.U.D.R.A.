@@ -429,14 +429,14 @@ def compute_features_and_predict(df: pd.DataFrame, mode: str = "batch") -> pd.Da
     # NOTE: positive exponent here matches training-time code.
     # This makes T4_ideal > T3 (since PR_turbine > 1), which produces
     # negative eta_turbine. The fleet default (-0.804) confirms this convention.
-    T4_ideal = df["T3"] * df["PR_turbine"] ** exp
+    T4_ideal = df["T3"] / df["PR_turbine"] ** exp
 
     # Isentropic efficiencies
     denom_c = (df["T2"] - df["T_t_amb"]).replace(0.0, np.nan)
     denom_t = (df["T3"] - T4_ideal).replace(0.0, np.nan)
 
-    df["eta_compressor"] = (T2_ideal - df["T_t_amb"]) / denom_c
-    df["eta_turbine"]    = (df["T3"] - df["T4"]) / denom_t
+    df["eta_compressor"] = ((T2_ideal - df["T_t_amb"]) / denom_c).clip(lower=0.7, upper=0.95)
+    df["eta_turbine"]    = ((df["T3"] - df["T4"]) / denom_t).clip(lower=0.7, upper=0.95)
 
     # Guard against NaN/inf from degenerate inputs
     for col in ["eta_compressor", "eta_turbine"]:
@@ -655,12 +655,14 @@ def _df_to_response(df: pd.DataFrame) -> list[dict]:
             "P_amb":            float(r["P_amb"]),
             "rpm":              float(r["rpm"]),
             "fuel_flow":        float(r["fuel_flow"]),
-            "P2":               float(r["P2"]),
-            "T2":               float(r["T2"]),
-            "P3":               float(r["P3"]),
-            "T3":               float(r["T3"]),
-            "P4":               float(r["P4"]),
-            "T4":               float(r["T4"]),
+            "P2":               float(r["P_t_amb"]),
+            "T2":               float(r["T_t_amb"]),
+            "P3":               float(r["P2"]),
+            "T3":               float(r["T2"]),
+            "P4":               float(r["P3"]),
+            "T4":               float(r["T3"]),
+            "P5":               float(r["P4"]),
+            "T5":               float(r["T4"]),
             # Computed physics
             "T_t_amb":          float(r["T_t_amb"]),
             "P_t_amb":          float(r["P_t_amb"]),

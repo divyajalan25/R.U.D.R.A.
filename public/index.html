@@ -699,7 +699,7 @@
         </div>
         <svg class="spark" id="spark-comb" width="100%" height="30" viewBox="0 0 200 34" preserveAspectRatio="none"></svg>
         <div class="metric-row"><span>&Delta;P/P</span><b id="dp-comb">—</b></div>
-        <div class="metric-row"><span>T3&minus;T2</span><b id="dt-comb">—</b></div>
+        <div class="metric-row"><span>T4&minus;T3</span><b id="dt-comb">—</b></div>
       </div>
       <div class="panel">
         <div class="panel-head"><div><div class="panel-eyebrow">04</div><div class="panel-title">Turbine</div></div></div>
@@ -829,11 +829,11 @@
       </div>
       <div style="display:flex; flex-direction:column; gap:10px; font-size:11px; margin-top:8px;">
         <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--grid-line); padding-bottom:4px;">
-          <span style="color:var(--ink-dim);">Compressor Work (T2 - T_t,amb)</span>
+          <span style="color:var(--ink-dim);">Compressor Work (T3 - T_t,amb)</span>
           <b id="p-comp-work" class="mono">—</b>
         </div>
         <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--grid-line); padding-bottom:4px;">
-          <span style="color:var(--ink-dim);">Turbine Work (T3 - T4)</span>
+          <span style="color:var(--ink-dim);">Turbine Work (T4 - T5)</span>
           <b id="p-turb-work" class="mono">—</b>
         </div>
         <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--grid-line); padding-bottom:4px;">
@@ -1942,20 +1942,20 @@ function refreshComponentCard(){
       metricsHTML = `
         <div><div class="m-label">&eta;<sub>c</sub></div><div class="m-val">${fmt.eff(d.eta_c)}</div></div>
         <div><div class="m-label">&pi;<sub>c</sub></div><div class="m-val">${fmt.pr(d.pi_c)}</div></div>
-        <div><div class="m-label">T2 (exit)</div><div class="m-val">${fmt.temp(d.t2)}</div></div>
-        <div><div class="m-label">P2 (exit)</div><div class="m-val">${fmt.press(d.p2)}</div></div>`;
+        <div><div class="m-label">T3 (exit)</div><div class="m-val">${fmt.temp(d.t2)}</div></div>
+        <div><div class="m-label">P3 (exit)</div><div class="m-val">${fmt.press(d.p2)}</div></div>`;
     } else if(selectedComponent==='combustor'){
       metricsHTML = `
         <div><div class="m-label">&Delta;P/P</div><div class="m-val">${(d.dp_comb*100).toFixed(1)}%</div></div>
-        <div><div class="m-label">T3&minus;T2</div><div class="m-val">${fmt.temp(d.dt_comb)}</div></div>
-        <div><div class="m-label">T3 (exit)</div><div class="m-val">${fmt.temp(d.t3)}</div></div>
-        <div><div class="m-label">P3 (exit)</div><div class="m-val">${fmt.press(d.p3)}</div></div>`;
+        <div><div class="m-label">T4&minus;T3</div><div class="m-val">${fmt.temp(d.dt_comb)}</div></div>
+        <div><div class="m-label">T4 (exit)</div><div class="m-val">${fmt.temp(d.t3)}</div></div>
+        <div><div class="m-label">P4 (exit)</div><div class="m-val">${fmt.press(d.p3)}</div></div>`;
     } else if(selectedComponent==='turbine'){
       metricsHTML = `
         <div><div class="m-label">&eta;<sub>t</sub></div><div class="m-val">${fmt.eff(d.eta_t)}</div></div>
         <div><div class="m-label">&pi;<sub>t</sub></div><div class="m-val">${fmt.pr(d.pi_t)}</div></div>
-        <div><div class="m-label">T4 (exit)</div><div class="m-val">${fmt.temp(d.t4)}</div></div>
-        <div><div class="m-label">P4 (exit)</div><div class="m-val">${fmt.press(d.p4)}</div></div>`;
+        <div><div class="m-label">T5 (exit)</div><div class="m-val">${fmt.temp(d.t4)}</div></div>
+        <div><div class="m-label">P5 (exit)</div><div class="m-val">${fmt.press(d.p4)}</div></div>`;
     }
     trendEl.innerHTML = trendText(info.hiKey);
     sparkArr = data.slice(Math.max(0,currentCycle-40), currentCycle+1).map(x=>x[info.hiKey]);
@@ -2096,9 +2096,9 @@ function computeIdealBrayton(d) {
   return {
     stations: [
       { label: '1 (Inlet)',      T: T1,         P: P1,           s: s1 },
-      { label: '2s (Comp exit)', T: T2s,        P: P2s,          s: s2s },
-      { label: '3 (Comb exit)',  T: T3,          P: P3_ideal,     s: s3_ideal },
-      { label: '4s (Turb exit)', T: T4s_ideal,  P: P4s_ideal,    s: s4s_ideal },
+      { label: '3s (Comp exit)', T: T2s,        P: P2s,          s: s2s },
+      { label: '4 (Comb exit)',  T: T3,          P: P3_ideal,     s: s3_ideal },
+      { label: '5s (Turb exit)', T: T4s_ideal,   P: P4s_ideal,    s: s3_ideal },
     ],
     eta_th: eta_th_ideal,
     w_comp: w_comp_ideal,
@@ -2138,9 +2138,9 @@ function computeActualBrayton(d) {
   return {
     stations: [
       { label: '1 (Inlet)',      T: T1, P: P1, s: s1 },
-      { label: '2 (Comp exit)',  T: T2, P: P2, s: s2 },
-      { label: '3 (Comb exit)',  T: T3, P: P3, s: s3 },
-      { label: '4 (Turb exit)',  T: T4, P: P4, s: s4 },
+      { label: '3 (Comp exit)',  T: T2, P: P2, s: s2 },
+      { label: '4 (Comb exit)',  T: T3, P: P3, s: s3 },
+      { label: '5 (Turb exit)',  T: T4, P: P4, s: s4 },
     ],
     eta_th,
     w_comp,
@@ -2932,12 +2932,12 @@ const SLIDER_CONFIG = [
   { key: 'Pamb_Pa',        label: 'P Ambient',    min: 10000, max: 110000, step: 500,  def: 55000, unit: 'Pa' },
   { key: 'RPM_rev_min',    label: 'Shaft RPM',    min: 20000, max: 80000,  step: 100,  def: 45000, unit: 'rpm' },
   { key: 'FuelFlow_kg_s',  label: 'Fuel Flow',    min: 0.1,   max: 3.0,    step: 0.01, def: 1.2,   unit: 'kg/s' },
-  { key: 'P2_Pa',          label: 'P2 (Comp Exit)',min: 30000, max: 500000, step: 1000, def: 200000,unit: 'Pa' },
-  { key: 'T2_K',           label: 'T2 (Comp Exit)',min: 280,   max: 700,    step: 1,    def: 400,   unit: 'K' },
-  { key: 'P3_Pa',          label: 'P3 (Comb Exit)',min: 30000, max: 500000, step: 1000, def: 190000,unit: 'Pa' },
-  { key: 'T3_K',           label: 'T3 (Turb In)', min: 500,   max: 4000,   step: 10,   def: 2000,  unit: 'K' },
-  { key: 'P4_Pa',          label: 'P4 (Turb Exit)',min: 20000, max: 300000, step: 1000, def: 150000,unit: 'Pa' },
-  { key: 'T4_K',           label: 'T4 (Turb Exit)',min: 400,   max: 3500,   step: 10,   def: 1800,  unit: 'K' },
+  { key: 'P2_Pa',          label: 'P3 (Comp Exit)',min: 30000, max: 500000, step: 1000, def: 200000,unit: 'Pa' },
+  { key: 'T2_K',           label: 'T3 (Comp Exit)',min: 280,   max: 700,    step: 1,    def: 400,   unit: 'K' },
+  { key: 'P3_Pa',          label: 'P4 (Comb Exit)',min: 30000, max: 500000, step: 1000, def: 190000,unit: 'Pa' },
+  { key: 'T3_K',           label: 'T4 (Turb In)', min: 500,   max: 4000,   step: 10,   def: 2000,  unit: 'K' },
+  { key: 'P4_Pa',          label: 'P5 (Turb Exit)',min: 20000, max: 300000, step: 1000, def: 150000,unit: 'Pa' },
+  { key: 'T4_K',           label: 'T5 (Turb Exit)',min: 400,   max: 3500,   step: 10,   def: 1800,  unit: 'K' },
 ];
 
 // ──── Convert API prediction → data[] format for existing render() ────
@@ -2954,7 +2954,7 @@ function apiToDataRow(p) {
     rul: Math.max(0, Math.round(p.RUL)),
     sigma: Math.max(2, Math.abs(p.RUL) * 0.1 + 2), // rough uncertainty proxy
     ttamb: p.T_t_amb, ptamb: p.P_t_amb,
-    t2: p.T2, p2: p.P2, t3: p.T3, p3: p.P3, t4: p.T4, p4: p.P4,
+    t2: p.T3, p2: p.P3, t3: p.T4, p3: p.P4, t4: p.T5, p4: p.P5,
     hi_c: Math.max(0, Math.min(1, p.HI_compressor)),
     hi_t: Math.max(0, Math.min(1, p.HI_turbine)),
     hi_comb: Math.max(0, Math.min(1, p.HI_combustor)),

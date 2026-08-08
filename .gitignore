@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+digital_twin.db
+data/predictions.csv
+data/test.csv
+models/
+catboost_info/

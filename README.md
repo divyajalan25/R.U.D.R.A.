@@ -60,7 +60,7 @@ This will:
 ## 📂 Data Format
 
 The Digital Twin accepts batch data uploads in CSV format for offline predictions. Ensure your dataset includes the following columns:
-`engine_id, cycle, altitude, mach, T_amb, P_amb, rpm, fuel_flow, P2_Pa, T2_K, P3_Pa, T3_K, P4_Pa, T4_K`
+`EngineID, Cycle, Altitude_m, Mach, Tamb_K, Pamb_Pa, RPM_rev_min, FuelFlow_kg_s, P2_Pa, T2_K, P3_Pa, T3_K, P4_Pa, T4_K`
 
 *(Note: Raw telemetry `P2_Pa` aligns with the compressor exit in this dataset, which the API securely translates to standard $P_3$ for the predictive models).* 
 

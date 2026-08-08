@@ -1,0 +1,1 @@
+["cycle", "altitude", "mach", "T_amb", "P_amb", "rpm", "fuel_flow", "PR_compressor", "PR_combustor", "PR_turbine", "PR_overall", "eta_compressor", "eta_turbine", "compressor_work", "turbine_work", "net_specific_work", "T_rise_combustor", "eta_compressor_baseline_input", "eta_turbine_baseline_input", "PR_combustor_baseline_input"]
